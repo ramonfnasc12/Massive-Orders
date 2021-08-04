@@ -1,6 +1,36 @@
+// Account Name
 const accountName = 'avonqa';
+// Number of paralel orders created per run
 const n = 1;
+// Number of SKUs to be considered on order creation
+const ni = 5;
+// Cookie taken from the myvtex environment through the browser
 const VtexIdclientAutCookie = "Adicionar Cookie"
+// PostalCode considered on the simulation
+const postalCode = "04272-300"
+// Client's email
+const email = "bruna.baldaconi@avon.com";
+// Client's first name
+const firstName = "Bruna";
+// Client's last name
+const lastName = "Baldaconi";
+// Client's CPF
+const document = "38417853871";
+// Client's phone number
+const phone = "+5511983585555";
+// Client's address id
+const addressId = "1625680876285";
+
+//Client's payment accountId
+const accountId = "4F18E88303B1494BAF41809A443E8F6B";
+//Client's payment credit card BIN
+const bin = "518745";
+//Client's credit card brand
+const paymentSystem = "4"; //Master Card
+// Card validation code (cvv)
+const validationCode = "980";
+
+// SKUs list to be considered randomly while creating the orders
 const itemsList = [
     '76176123',
     '76173458',
@@ -77,19 +107,19 @@ const itemSimulation = id =>
 
 const simulationRequest = (itemsSimulation) => ({
     "items": itemsSimulation,
-    "postalCode": "04272-300",
+    postalCode,
     "country": "BRA"
 });
 
 const orderPut = (items, logisticsInfo, totalPrice) => ({
     items,
     "clientProfileData": {
-        "email": "bruna.baldaconi@avon.com",
-        "firstName": "Bruna",
-        "lastName": "Baldaconi",
-        "document": "38417853871",
+        email,
+        firstName,
+        lastName,
+        document,
         "documentType": "cpf",
-        "phone": "+5511983585555",
+        phone,
         "corporateName": null,
         "tradeName": null,
         "corporateDocument": null,
@@ -100,16 +130,16 @@ const orderPut = (items, logisticsInfo, totalPrice) => ({
     "shippingData": {
         "id": "shippingData",
         "address": {
-            "addressId": "1625680876285",
+            addressId,
         },
         logisticsInfo
     },
     "paymentData": {
         "id": "paymentData",
         "payments": [{
-            "accountId": "4F18E88303B1494BAF41809A443E8F6B",
-            "bin": "518745",
-            "paymentSystem": "4",
+            accountId,
+            bin,
+            paymentSystem,
             "referenceValue": totalPrice,
             "value": totalPrice,
             "installments": 1
@@ -122,18 +152,18 @@ const orderPayment = (transactionId, totalPrice) => [
         "hasDefaultBillingAddress": true,
         "installmentsInterestRate": 0,
         "referenceValue": totalPrice,
-        "bin": "518745",
-        "accountId": "4F18E88303B1494BAF41809A443E8F6B",
+        bin,
+        accountId,
         "value": totalPrice,
         "tokenId": null,
-        "paymentSystem": "4",
+        paymentSystem,
         "isBillingAddressDifferent": false,
         "fields": {
             "dueDate": null,
-            "validationCode": "980",
-            "bin": "518745",
-            "accountId": "4F18E88303B1494BAF41809A443E8F6B",
-            "addressId": "1625680876285",
+            validationCode,
+            bin,
+            accountId,
+            addressId,
             "cardNumber": null
         },
         "installments": 1,
@@ -151,13 +181,14 @@ const orderPayment = (transactionId, totalPrice) => [
         "groupName": "creditCardPaymentGroup"
     }
 ]
+
 const orders = [];
 
 for (let i = 0; i < n; i++) {
     let itemsSimulation = [];
     const seen = new Set();
 
-    for (let j = 0; j < 5; j++) {
+    for (let j = 0; j < ni; j++) {
         itemsSimulation.push(itemSimulation(itemsList[generateRandomIntegerInRange(0, itemsList.length - 1)]))
     }
     //console.log(itemsSimulation)
@@ -173,8 +204,7 @@ Promise.all(orders);
 
 async function createOrder(simulationRequest) {
     try {
-        //Criar pedido
-        //console.log(simulationRequest)
+        //Simular pedido
         const simulationResponse = await instance.post(`https://${accountName}.myvtex.com/api/checkout/pvt/orderforms/simulation?sc=1`, simulationRequest);
         const items = []
         const simulationItems = simulationResponse.data.items
@@ -190,7 +220,6 @@ async function createOrder(simulationRequest) {
             }
             items.push(sku)
         });
-        //console.log(items);
 
         const logisticInfo = []
         const simulationLogistic = simulationResponse.data.logisticsInfo
@@ -201,14 +230,14 @@ async function createOrder(simulationRequest) {
                 "price": element.slas[0].price
             })
         })
-        //console.log(logisticInfo)
+
         let totalPrice = 0;
         simulationResponse.data.totals.forEach(item => {
             totalPrice = totalPrice + item.value
         });
         logisticInfo.forEach(element => totalPrice = totalPrice + element.price)
 
-
+        //Criar pedido
         const orderResponse = await instance.put(`https://${accountName}.myvtex.com/api/checkout/pub/orders?sc=1`, orderPut(items, logisticInfo, totalPrice));
 
         const headers = orderResponse.headers['set-cookie'];
