@@ -1,7 +1,7 @@
 // Account Name
-const accountName = 'avonqa';
+const accountName = 'accountName';
 // Number of paralel orders created per run
-const n = 1;
+const n = 10;
 // Number of SKUs to be considered on order creation
 const ni = 5;
 // Cookie taken from the myvtex environment through the browser
@@ -9,15 +9,15 @@ const VtexIdclientAutCookie = "Adicionar Cookie"
 // PostalCode considered on the simulation
 const postalCode = "04272-300"
 // Client's email
-const email = "bruna.baldaconi@avon.com";
+const email = "joao.neves@got.com";
 // Client's first name
-const firstName = "Bruna";
+const firstName = "Joao";
 // Client's last name
-const lastName = "Baldaconi";
+const lastName = "das Neves";
 // Client's CPF
-const document = "38417853871";
+const document = "46207392000";
 // Client's phone number
-const phone = "+5511983585555";
+const phone = "+5521988554477";
 // Client's address id
 const addressId = "1625680876285";
 
@@ -34,55 +34,6 @@ const validationCode = "980";
 const itemsList = [
     '76176123',
     '76173458',
-    '119231204',
-    '119231210',
-    '76175278',
-    '83391634',
-    '76175175',
-    '90917754',
-    '76173202',
-    '81944833',
-    '76175698',
-    '119231214',
-    '99080720',
-    '76173680',
-    '119231207',
-    '76376809',
-    '119231205',
-    '119231202',
-    '119231208',
-    '119231211',
-    '119231212',
-    '104385234',
-    '76177733',
-    '76176151',
-    '79288370',
-    '99990479',
-    '119231213',
-    '119231201',
-    '76175960',
-    '76178591',
-    '119231218',
-    '119231200',
-    '76177162',
-    '78517870',
-    '78517689',
-    '76175719',
-    '119231206',
-    '119231216',
-    '76174620',
-    '119231215',
-    '76176622',
-    '76176739',
-    '82966246',
-    '76176717',
-    '76176622',
-    '79160760',
-    '76172982',
-    '82966246',
-    '76173034',
-    '76173057',
-    '76176622'
 ]
 
 const axios = require('axios');
